@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"sms-verify/data"
 	"time"
@@ -18,18 +19,15 @@ func (app *Config) sendSMS() gin.HandlerFunc {
 		var payload data.OTPData
 		defer cancel()
 
-		err := app.validateBody(ctx, &payload)
-		if err != nil {
-			app.errorJSON(ctx, err)
-			return
-		}
+		app.validateBody(ctx, &payload)
 
 		newData := data.OTPData{
 			PhoneNumber: payload.PhoneNumber,
 		}
 
-		_, err = app.twilioSendOTP(newData.PhoneNumber)
+		_, err := app.twilioSendOTP(newData.PhoneNumber)
 		if err != nil {
+			log.Println("error: ", "error sending otp")
 			app.errorJSON(ctx, err)
 			return
 		}
@@ -44,18 +42,14 @@ func (app *Config) verifySMS() gin.HandlerFunc {
 		var payload data.VerifyData
 		defer cancel()
 
-		err := app.validateBody(ctx, &payload)
-		if err != nil {
-			app.errorJSON(ctx, err)
-			return
-		}
+		app.validateBody(ctx, &payload)
 
 		newData := data.VerifyData{
 			User: payload.User,
 			Code: payload.Code,
 		}
 
-		err = app.twilioVerifyOTP(newData.User.PhoneNumber, newData.Code)
+		err := app.twilioVerifyOTP(newData.User.PhoneNumber, newData.Code)
 		fmt.Println("err: ", err)
 		if err != nil {
 			app.errorJSON(ctx, err)

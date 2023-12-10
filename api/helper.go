@@ -16,10 +16,11 @@ type jsonResponse struct {
 var validate = validator.New()
 
 func (app *Config) validateBody(ctx *gin.Context, data any) error {
+	//validate the request body
 	if err := ctx.BindJSON(&data); err != nil {
 		return err
 	}
-
+	//use the validator library to validate required fields
 	if err := validate.Struct(&data); err != nil {
 		return err
 	}
