@@ -1,6 +1,10 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"sms-verify/api"
+
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
 	router := gin.Default()
